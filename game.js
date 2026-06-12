@@ -157,12 +157,14 @@ const helpModeHintBtn = document.getElementById('mode-hint-btn');
 let swipeStart = null;
 document.addEventListener('touchstart', e => {
   if (helpOverlay.contains(e.target)) return;
+  if (e.target.closest('button')) return;
   e.preventDefault();
   swipeStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
 }, { passive: false });
 
 document.addEventListener('touchend', e => {
   if (helpOverlay.contains(e.target)) return;
+  if (e.target.closest('button')) return;
   e.preventDefault();
   if (helpOpen) return;
   if (!swipeStart) return;

@@ -397,7 +397,7 @@ function frogHitByCar() {
   const lane = getLaneAt(row);
   if (!lane) return false;
   for (const obj of lane.objects) {
-    if (frog.col + 0.4 > obj.x && frog.col - 0.4 < obj.x + obj.w) return true;
+    if (frog.col + 0.28 > obj.x + 0.15 && frog.col - 0.28 < obj.x + obj.w - 0.15) return true;
   }
   return false;
 }

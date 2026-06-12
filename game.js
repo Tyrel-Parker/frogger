@@ -1,6 +1,3 @@
-const DEBUG_HITBOXES = true;
-let debugPaused = false;
-
 // ─── ON-SCREEN ERROR LOG ─────────────────────────────────────────────────────
 const errorLog = document.getElementById('error-log');
 function logError(msg) {
@@ -180,7 +177,7 @@ document.addEventListener('touchend', e => {
     return;
   }
 
-  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) { if (debugPaused) { debugPaused = false; return; } handleStart(); return; }
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) { handleStart(); return; }
   if (controlMode !== 'swipe') return;
 
   if (Math.abs(dx) > Math.abs(dy)) {
@@ -195,7 +192,7 @@ document.addEventListener('keydown', e => {
     if (e.code === 'Escape') { closeHelp(); e.preventDefault(); }
     return;
   }
-  if (e.code === 'Space') { e.preventDefault(); if (debugPaused) { debugPaused = false; return; } handleStart(); return; }
+  if (e.code === 'Space') { e.preventDefault(); handleStart(); return; }
   if (gameState === 'nameentry') {
     e.preventDefault();
     if (e.code === 'ArrowUp'    || e.code === 'KeyW') cycleNameChar(-1);
@@ -237,8 +234,8 @@ function handleOrientation(e) {
   tiltIndicator.textContent = `b${beta.toFixed(0)} g${gamma.toFixed(0)}`;
   if (gameState !== 'playing') return;
   const now = Date.now();
-  if (now - lastTiltMove < 400) return;
-  const THRESH = 15;
+  if (now - lastTiltMove < 250) return;
+  const THRESH = 10;
   if (Math.abs(gamma) > Math.abs(beta)) {
     if (gamma >  THRESH) { pendingMove = { dc: 1, dr: 0 };  lastTiltMove = now; }
     if (gamma < -THRESH) { pendingMove = { dc: -1, dr: 0 }; lastTiltMove = now; }
@@ -427,7 +424,6 @@ function checkHomePad() {
 
 function killFrog(reason) {
   if (frog.dead) return;
-  if (DEBUG_HITBOXES) debugPaused = true;
   frog.dead = true;
   frog.deathFrame = 0;
   lives--;
@@ -825,65 +821,6 @@ function drawNameEntry() {
   ctx.restore();
 }
 
-function drawDebugPauseOverlay() {
-  ctx.save();
-  ctx.fillStyle = 'rgba(0,0,0,0.55)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = '11px "Press Start 2P", monospace';
-  ctx.fillStyle = '#FFD700';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('PAUSED — SPACE/TAP TO RESUME', canvas.width / 2, canvas.height / 2);
-  ctx.restore();
-}
-
-function drawHitboxes() {
-  ctx.save();
-  ctx.lineWidth = 2;
-
-  // Car hitboxes (red fill + border)
-  lanes.filter(l => l.type === 'car').forEach(lane => {
-    lane.objects.forEach(obj => {
-      const x = (obj.x + 0.05) * CELL;
-      const y = lane.row * CELL + 4;
-      const w = (obj.w - 0.1) * CELL;
-      const h = CELL - 8;
-      ctx.fillStyle = 'rgba(255,0,0,0.25)';
-      ctx.fillRect(x, y, w, h);
-      ctx.strokeStyle = '#FF0000';
-      ctx.strokeRect(x, y, w, h);
-    });
-  });
-
-  // Platform (log/turtle) hitboxes (cyan)
-  // frogOnPlatform checks: frog.col >= obj.x - 0.5 && frog.col < obj.x + obj.w - 0.5
-  // = frog.col + 0.5 (visual center) is in [obj.x, obj.x + obj.w)
-  lanes.filter(l => l.type === 'log' || l.type === 'turtle').forEach(lane => {
-    lane.objects.forEach(obj => {
-      if (lane.type === 'turtle' && obj.diveState === 'under') return;
-      const x = obj.x * CELL;
-      const y = lane.row * CELL + 4;
-      const w = obj.w * CELL;
-      const h = CELL - 8;
-      ctx.fillStyle = 'rgba(0,255,255,0.15)';
-      ctx.fillRect(x, y, w, h);
-      ctx.strokeStyle = '#00FFFF';
-      ctx.strokeRect(x, y, w, h);
-    });
-  });
-
-  // Frog hitbox (yellow) — center matches drawFrog: frog.col * CELL + CELL/2
-  const fc = frog.col + 0.5;
-  const fx = (fc - 0.3) * CELL;
-  const fy = frog.row * CELL + 4;
-  ctx.fillStyle = 'rgba(255,255,0,0.3)';
-  ctx.fillRect(fx, fy, 0.6 * CELL, CELL - 8);
-  ctx.strokeStyle = '#FFFF00';
-  ctx.strokeRect(fx, fy, 0.6 * CELL, CELL - 8);
-
-  ctx.restore();
-}
-
 function render() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -893,8 +830,6 @@ function render() {
   drawFrog();
   drawTimerBar();
   drawFloatingScores();
-  if (DEBUG_HITBOXES) drawHitboxes();
-  if (debugPaused) drawDebugPauseOverlay();
   if (gameState === 'highscore') drawLeaderboard();
   if (gameState === 'nameentry') drawNameEntry();
 }
@@ -908,7 +843,7 @@ function loop(ts) {
   if (dt < 14) return;
   lastTime = ts;
 
-  if ((gameState === 'playing' || gameState === 'dying') && !helpOpen && !debugPaused) {
+  if ((gameState === 'playing' || gameState === 'dying') && !helpOpen) {
     update();
   }
 

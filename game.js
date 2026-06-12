@@ -401,7 +401,7 @@ function frogHitByCar() {
   if (!lane) return false;
   const fc = frog.col + 0.5; // visual center matches drawFrog: frog.col * CELL + CELL/2
   for (const obj of lane.objects) {
-    if (fc + 0.25 > obj.x + 0.1 && fc - 0.25 < obj.x + obj.w - 0.1) return true;
+    if (fc + 0.3 > obj.x + 0.05 && fc - 0.3 < obj.x + obj.w - 0.05) return true;
   }
   return false;
 }
@@ -844,9 +844,9 @@ function drawHitboxes() {
   // Car hitboxes (red fill + border)
   lanes.filter(l => l.type === 'car').forEach(lane => {
     lane.objects.forEach(obj => {
-      const x = (obj.x + 0.1) * CELL;
+      const x = (obj.x + 0.05) * CELL;
       const y = lane.row * CELL + 4;
-      const w = (obj.w - 0.2) * CELL;
+      const w = (obj.w - 0.1) * CELL;
       const h = CELL - 8;
       ctx.fillStyle = 'rgba(255,0,0,0.25)';
       ctx.fillRect(x, y, w, h);
@@ -874,12 +874,12 @@ function drawHitboxes() {
 
   // Frog hitbox (yellow) — center matches drawFrog: frog.col * CELL + CELL/2
   const fc = frog.col + 0.5;
-  const fx = (fc - 0.25) * CELL;
+  const fx = (fc - 0.3) * CELL;
   const fy = frog.row * CELL + 4;
   ctx.fillStyle = 'rgba(255,255,0,0.3)';
-  ctx.fillRect(fx, fy, 0.5 * CELL, CELL - 8);
+  ctx.fillRect(fx, fy, 0.6 * CELL, CELL - 8);
   ctx.strokeStyle = '#FFFF00';
-  ctx.strokeRect(fx, fy, 0.5 * CELL, CELL - 8);
+  ctx.strokeRect(fx, fy, 0.6 * CELL, CELL - 8);
 
   ctx.restore();
 }

@@ -399,8 +399,9 @@ function frogHitByCar() {
   if (row < 7 || row > 11) return false;
   const lane = getLaneAt(row);
   if (!lane) return false;
+  const fc = frog.col + 0.5; // visual center matches drawFrog: frog.col * CELL + CELL/2
   for (const obj of lane.objects) {
-    if (frog.col + 0.28 > obj.x + 0.15 && frog.col - 0.28 < obj.x + obj.w - 0.15) return true;
+    if (fc + 0.25 > obj.x + 0.1 && fc - 0.25 < obj.x + obj.w - 0.1) return true;
   }
   return false;
 }
@@ -826,48 +827,59 @@ function drawNameEntry() {
 
 function drawDebugPauseOverlay() {
   ctx.save();
-  ctx.fillStyle = 'rgba(255,255,0,0.15)';
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = '10px "Press Start 2P", monospace';
+  ctx.font = '11px "Press Start 2P", monospace';
   ctx.fillStyle = '#FFD700';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('DEBUG PAUSED — SPACE/TAP TO RESUME', canvas.width / 2, 16);
+  ctx.fillText('PAUSED — SPACE/TAP TO RESUME', canvas.width / 2, canvas.height / 2);
   ctx.restore();
 }
 
 function drawHitboxes() {
   ctx.save();
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 2;
 
-  // Car hitboxes (red)
+  // Car hitboxes (red fill + border)
   lanes.filter(l => l.type === 'car').forEach(lane => {
     lane.objects.forEach(obj => {
-      const x = (obj.x + 0.15) * CELL;
-      const y = lane.row * CELL;
-      const w = (obj.w - 0.3) * CELL;
-      ctx.strokeStyle = 'rgba(255,0,0,0.9)';
-      ctx.strokeRect(x, y + 2, w, CELL - 4);
+      const x = (obj.x + 0.1) * CELL;
+      const y = lane.row * CELL + 4;
+      const w = (obj.w - 0.2) * CELL;
+      const h = CELL - 8;
+      ctx.fillStyle = 'rgba(255,0,0,0.25)';
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = '#FF0000';
+      ctx.strokeRect(x, y, w, h);
     });
   });
 
-  // Log/turtle hitboxes (cyan)
+  // Platform (log/turtle) hitboxes (cyan)
+  // frogOnPlatform checks: frog.col >= obj.x - 0.5 && frog.col < obj.x + obj.w - 0.5
+  // = frog.col + 0.5 (visual center) is in [obj.x, obj.x + obj.w)
   lanes.filter(l => l.type === 'log' || l.type === 'turtle').forEach(lane => {
     lane.objects.forEach(obj => {
       if (lane.type === 'turtle' && obj.diveState === 'under') return;
-      const x = (obj.x - 0.5) * CELL;
-      const y = lane.row * CELL;
-      const w = (obj.w - 0) * CELL; // same as frogOnPlatform range
-      ctx.strokeStyle = 'rgba(0,255,255,0.6)';
-      ctx.strokeRect(x, y + 2, (obj.w) * CELL, CELL - 4);
+      const x = obj.x * CELL;
+      const y = lane.row * CELL + 4;
+      const w = obj.w * CELL;
+      const h = CELL - 8;
+      ctx.fillStyle = 'rgba(0,255,255,0.15)';
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = '#00FFFF';
+      ctx.strokeRect(x, y, w, h);
     });
   });
 
-  // Frog hitbox (yellow)
-  const fx = (frog.col - 0.28) * CELL;
-  const fy = frog.row * CELL;
-  ctx.strokeStyle = 'rgba(255,255,0,0.9)';
-  ctx.strokeRect(fx, fy + 2, 0.56 * CELL, CELL - 4);
+  // Frog hitbox (yellow) — center matches drawFrog: frog.col * CELL + CELL/2
+  const fc = frog.col + 0.5;
+  const fx = (fc - 0.25) * CELL;
+  const fy = frog.row * CELL + 4;
+  ctx.fillStyle = 'rgba(255,255,0,0.3)';
+  ctx.fillRect(fx, fy, 0.5 * CELL, CELL - 8);
+  ctx.strokeStyle = '#FFFF00';
+  ctx.strokeRect(fx, fy, 0.5 * CELL, CELL - 8);
 
   ctx.restore();
 }

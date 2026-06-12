@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:   #0a0a0f;
+  --yellow:  #FFD700;
+  --cyan:    #00FFFF;
+  --green:   #00FF44;
+  --red:     #FF0000;
+  --white:   #FFFFFF;
+  --dim:     #444466;
+}
+
+html, body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Press Start 2P', monospace;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 10px;
+  padding: 8px;
+}
+
+#title {
+  font-size: clamp(10px, 3vw, 18px);
+  color: var(--green);
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px var(--green);
+}
+
+#hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 560px;
+  font-size: clamp(7px, 2vw, 11px);
+  color: var(--white);
+  padding: 0 4px;
+}
+
+#score-block { color: var(--yellow); }
+#lives-block { color: var(--cyan); }
+
+#hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#mode-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1.5vw, 9px);
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--dim);
+  padding: 5px 8px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+#mode-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+#mode-btn.tilt-active { color: var(--yellow); border-color: var(--yellow); }
+
+@keyframes help-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--yellow); border-color: var(--yellow); color: var(--yellow); }
+  50% { box-shadow: 0 0 22px var(--yellow), 0 0 40px rgba(255,215,0,0.4); border-color: #fff; color: #fff; }
+}
+#mode-btn.help-highlight {
+  animation: help-pulse 1s ease-in-out infinite;
+}
+
+#help-btn {
+  background: transparent;
+  border: 2px solid var(--red);
+  color: var(--red);
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+#help-btn:hover { background: rgba(255,0,0,0.15); box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+
+canvas {
+  display: block;
+  image-rendering: pixelated;
+  max-width: 100%;
+  max-height: calc(100vh - 100px);
+}
+
+#message {
+  font-size: clamp(8px, 2.5vw, 14px);
+  color: var(--cyan);
+  text-align: center;
+  letter-spacing: 2px;
+  min-height: 20px;
+  text-shadow: 0 0 10px var(--cyan);
+}
+
+#tilt-indicator {
+  font-size: clamp(5px, 1.2vw, 8px);
+  color: var(--dim);
+  letter-spacing: 1px;
+  min-height: 14px;
+}
+
+/* ─── HELP MODAL ─────────────────────────────────────────────────────────── */
+
+#help-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 10, 0.88);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+#help-overlay.open { display: flex; }
+
+#help-modal {
+  background: #06060f;
+  border: 2px solid var(--cyan);
+  max-width: 400px;
+  width: 90%;
+  padding: 20px 16px 16px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.25);
+}
+
+#help-close {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--dim);
+  padding: 4px 7px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+#help-close:hover { color: var(--red); border-color: var(--red); }
+
+.help-title {
+  color: var(--yellow);
+  font-size: 11px;
+  text-align: center;
+  margin-bottom: 14px;
+  text-shadow: 0 0 10px var(--yellow);
+  letter-spacing: 2px;
+}
+
+.help-heading {
+  color: var(--cyan);
+  font-size: 7px;
+  margin: 12px 0 5px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #1a1a3a;
+  padding-bottom: 4px;
+}
+
+.help-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 6px;
+  color: var(--white);
+  padding: 3px 0;
+}
+.help-row span:first-child { color: #AAAACC; }
+
+.help-mode-hint {
+  font-size: 6px;
+  color: var(--dim);
+  margin-top: 8px;
+  line-height: 2;
+}
+#mode-hint-btn {
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+}
+
+.help-tip {
+  font-size: 6px;
+  color: var(--dim);
+  margin-top: 14px;
+  line-height: 2.2;
+  text-align: center;
+}

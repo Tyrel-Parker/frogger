@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FROGGER</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="shell">
+  <div id="title">FROGGER</div>
+  <div id="hud">
+    <span id="score-block">SCORE: <span id="score-val">0</span></span>
+    <button id="mode-btn">⌨ KEYS</button>
+    <span id="hud-right">
+      <span id="lives-block">LIVES: <span id="lives-val">3</span></span>
+      <button id="help-btn">
+        <svg width="12" height="16" viewBox="0 0 12 16" aria-hidden="true">
+          <rect x="0" y="0" width="4" height="16" fill="currentColor"/>
+          <rect x="8" y="0" width="4" height="16" fill="currentColor"/>
+        </svg>
+      </button>
+    </span>
+  </div>
+  <canvas id="c"></canvas>
+  <div id="message"></div>
+  <div id="tilt-indicator"></div>
+  <div id="error-log" style="font-family:monospace;font-size:10px;color:#ff4444;background:#1a0000;padding:4px 8px;max-width:560px;width:100%;word-break:break-all;display:none;max-height:80px;overflow-y:auto;"></div>
+  <div id="version-num" style="font-family:'Press Start 2P',monospace;font-size:7px;color:#333;letter-spacing:1px;margin-top:4px;">v1.0</div>
+</div>
+
+<div id="help-overlay">
+  <div id="help-modal">
+    <button id="help-close">✕ CLOSE</button>
+    <div class="help-title">HOW TO PLAY</div>
+
+    <div class="help-heading">CONTROLS</div>
+    <div class="help-row"><span>KEYS MODE</span><span>ARROW KEYS / WASD</span></div>
+    <div class="help-row"><span>SWIPE MODE</span><span>SWIPE ON SCREEN</span></div>
+    <div class="help-row"><span>TILT MODE</span><span>TILT YOUR DEVICE</span></div>
+    <div class="help-mode-hint">USE THE <span id="mode-hint-btn">⌨ KEYS</span> BUTTON TO SWITCH MODES</div>
+
+    <div class="help-heading">OBJECTIVE</div>
+    <div class="help-row"><span>GUIDE FROG HOME</span><span>FILL ALL 5 PADS</span></div>
+    <div class="help-row"><span>AVOID CARS</span><span>DON'T GET HIT</span></div>
+    <div class="help-row"><span>RIDE LOGS/TURTLES</span><span>CROSS THE RIVER</span></div>
+    <div class="help-row"><span>DON'T DROWN</span><span>STAY ON PLATFORM</span></div>
+
+    <div class="help-heading">SCORING</div>
+    <div class="help-row"><span>HOP FORWARD</span><span>10 PTS</span></div>
+    <div class="help-row"><span>REACH HOME PAD</span><span>50 PTS</span></div>
+    <div class="help-row"><span>ALL 5 PADS</span><span>BONUS PTS</span></div>
+    <div class="help-row"><span>TIME BONUS</span><span>10 × TIME LEFT</span></div>
+
+    <div class="help-tip">BEWARE: TURTLES DIVE UNDERWATER!<br>LAND ON LOGS OR TURTLES TO CROSS</div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
